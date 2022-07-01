@@ -1,0 +1,8 @@
+- name: Playbook2
+  hosts: all
+  tasks:
+    - name: Print messages_2
+      debug:
+        msg: "{{URL}}"
+          # vars:
+          # URL: Local_url

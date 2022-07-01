@@ -1,2 +1,1 @@
-16.171.66.63
-13.48.204.39
+13.48.204.39  ansible_ssh_user=ec2-user   ansible_ssh_pass=/home/ec2-user/stockholm_dell.pem URL=host_file_url

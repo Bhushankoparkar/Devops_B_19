@@ -1,6 +1,13 @@
 - name: Playbook1
   hosts: all
+  vars:
+    URL: www.google.com
+    URL_i: www.google.com/images
   tasks:
-  - name: Print messages
-    debug:
-      msg: welcome to cloudblitz
+    - ping:
+    - shell: uptime >> demo.txt
+    - name: Print messages
+      debug:
+        msg:
+          welcome to cloudblitz
+          my name is swapnil
