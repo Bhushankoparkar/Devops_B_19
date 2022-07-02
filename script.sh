@@ -64,3 +64,73 @@ name: Playbook1
         msg:
           welcome to cloudblitz
           my name is swapnil
+---------------------------------------------------------------------
+############# to ignore errors #####################
+- name: playbook_3
+  hosts: all
+  tasks:
+
+    - name: get output
+      shell:  ps -elf | grep sleep | grep - v grep
+      ignore_errors: yes
+
+    -name: print massage
+      debug:
+        msg: "hello world"
+
+
+-----------------------------------------------------------
+########### use of tags  ############# (-t <tag name>)
+- name: playbook_2
+  hosts: all
+  gather_facts: no
+  tasks:
+
+    - name: Print the task_0
+      debug:
+        msg: "{{ansible_selinux_python_present}}"
+      tags: 0
+
+
+    - name: Print the task_1
+      debug:
+        msg: "web server"
+      tags: 1
+
+    - name: Print the task_2
+      debug:
+        msg: "db server"
+      tags: 2
+
+    - name: Print the task_3
+      debug:
+        msg: "my server"
+      tags: 3
+
+    - name: Register value
+      shell: uptime
+      register: result
+
+    - name: Printing the Register value
+      debug:
+        msg: "{{result.stdout}}"
+
+---------------------------------------------------------------------------------
+########  root Escalation ########################
+
+# - name: playbook_2
+#   hosts: all
+#   become: true
+#   tasks:
+#     - name: get uid
+#       shell: id
+#       register: out
+
+#     - name: print uid
+#       debug:
+#         msg: "my user id is {{out}}"
+
+#     - name: install
+#       yum:
+#         name: tree
+#         state: latest

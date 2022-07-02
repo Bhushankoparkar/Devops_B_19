@@ -1,0 +1,26 @@
+- name: playbook_2
+  hosts: all
+    # gather_facts: no
+  tasks:
+    - name: Print the task
+      debug:
+        msg: "{{ansible_selinux_python_present}}"
+
+
+    - name: Print the task
+      debug:
+        msg: "{{ansible_nodename}}"
+
+
+
+    - name: Print the task
+      debug:
+        msg: "Netmask of the node_1 is {{ansible_eth0.ipv4.netmask}}"          
+      
+    - name: Register value
+      shell: uptime
+      register: result
+
+    - name: Printing the Register value
+      debug:
+        msg: "{{result.stdout}}"        

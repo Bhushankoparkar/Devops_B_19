@@ -1,0 +1,17 @@
+- name: playbook_2
+  hosts: all
+  become: true
+  tasks:
+    - name: get uid
+      shell: id
+      register: out
+    
+    - name: print uid
+      debug:
+        msg: "my user id is {{out}}"   
+
+
+    - name: install
+      yum:
+        name: tree
+        state: latest          
