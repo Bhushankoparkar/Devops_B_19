@@ -134,3 +134,175 @@ name: Playbook1
 #       yum:
 #         name: tree
 #         state: latest
+
+
+############# to ignore errors #####################
+- name: playbook_3
+  hosts: all
+  tasks:
+
+    - name: get output
+      shell:  ps -elf | grep sleep | grep - v grep
+      ignore_errors: yes
+      
+    -name: print massage
+      debug:
+        msg: "hello world"
+
+
+-----------------------------------------------------------
+########### use of tags  ############# (-t <tag name>)
+- name: playbook_2
+  hosts: all
+  gather_facts: no
+  tasks:
+ 
+    - name: Print the task_0
+      debug:
+        msg: "{{ansible_selinux_python_present}}"
+      tags: 0
+
+
+    - name: Print the task_1
+      debug:
+        msg: "web server"
+      tags: 1
+
+    - name: Print the task_2
+      debug:
+        msg: "db server"
+      tags: 2
+
+    - name: Print the task_3
+      debug:
+        msg: "my server"                
+      tags: 3
+
+    - name: Register value
+      shell: uptime
+      register: result
+
+    - name: Printing the Register value
+      debug:
+        msg: "{{result.stdout}}"
+
+---------------------------------------------------------------------------------
+########  root Escalation ########################
+
+- name: playbook_2
+  hosts: all
+  become: true
+  tasks:
+    - name: get uid
+      shell: id
+      register: out
+    
+    - name: print uid
+      debug:
+        msg: "my user id is {{out}}"    
+
+    - name: install
+      yum:
+        name: tree
+        state: latest
+
+---------------------------------------------------------------------------------
+########  when condition ########################
+
+- name: playbook_2
+  hosts: all
+  gather_facts: yes
+  tasks:
+    - name: Print the task_1
+      debug:
+        msg: "{{ansible_distribution}}" 
+      when: ansible_distribution == "Ubuntu" and ansible_os_family == "Debian"
+      when: (ansible_distribution == "Ubuntu" and ansible_os_family == "Debian") or (ansible_distribution == "Ubuntu" and ansible_os_family == "Debian")
+    
+    - name: print uid
+      debug:
+        msg: "my user id is {{ansible_selinux_python_present}}"
+###############################################################################################
+
+#####################loop####################
+
+- name : loop name
+  hosta: all
+  tasks: 
+    - name : print city name
+      debug: 
+        msg: "all my city name : {{item}}"
+      loop:
+        - nag
+        - pune
+        - mumbai
+        - chandrapur
+
+    - name : install packages
+      become: true
+      yum: 
+        name: "{{item}}"
+        state: latest
+      loop:
+        - httpd
+        - vim
+        - tree
+        - tomcat
+########################################
+############# Setfacts ################################
+
+- name: setfacts_playbook
+  hosts: all
+  tasks:
+    - name: set fact
+      set_fact: URL=["www.google.com","www.igp.com"] city="nagpur"
+
+    - name: print variable
+      debug:
+        msg: "{{URL}}  {{city}}"
+
+########################## package modules in ansible  ###################
+- name: Package server installation
+  hosta: all
+  tasks:
+    - name: package installation
+      package: 
+        name: httpd
+        state: present
+
+############################## copy modules in ansible ################
+- name: copy module
+  hosts: all
+  tasks:
+    - name: copy file
+      copy: 
+        src: <file to copy>
+        dest: <location to pest by name>
+
+############################## template modules in ansible ################
+- name: template module
+  hosts: all
+  become: true
+  vars:
+    demo: <variable name>  # mention in file by: {{}}
+  tasks:
+    - template:
+        src: <file to copy>
+        dest: <location to pest by name>
+
+############################## blockinfile modules in ansible ################
+- name: blockinfile module
+  hosts: all
+  become: true
+  tasks:
+    - blockinfile:
+        path: /etc/httpd/conf.d/demo.conf
+        create: yes
+        block: |
+          <virtualhost *:80>
+          servername localhost
+          documentroot /var/www/html
+          </virtualhost>
+
+##################### lineinfile ########################### 
+##################### find ########################### 
