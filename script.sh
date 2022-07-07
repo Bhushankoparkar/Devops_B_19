@@ -304,5 +304,48 @@ name: Playbook1
           documentroot /var/www/html
           </virtualhost>
 
+
 ##################### lineinfile ########################### 
+- name: playbook_2
+  hosts: all
+  become: true
+  tasks:
+    - lineinfile:
+        path: <path of file to insert>
+        insertbefore: <line in file, before to be placed>
+        #insertafter: <line in file, after to be placed>
+        #regexp: <line in file to be replace>
+        line: <content to add>
+    - debug:
+        msg: "added" 
+
 ##################### find ########################### 
+
+- name: find playbook
+  hosts: all
+  become: true
+  tasks: 
+    - name:
+      find:
+        path: /var/log  #<where to find>
+        file_type: file
+        pattern: "*" 
+      register: out
+
+    - debug:
+        msg={{out}}
+-------------------------------------------------------
+# get details of path files
+    - debug:       
+        msg={{item.path}} 
+      loop: "{{out.files}}"
+
+# remove details of file stored in register
+    - name: remove the files
+      file:
+        path: "{{item.path}}"
+        state: absent
+      loop: "{{out.files}}"
+-------------------------------------------------------
+
+
