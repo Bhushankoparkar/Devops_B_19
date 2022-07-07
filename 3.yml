@@ -1,0 +1,65 @@
+#### yml file to play role should be out of role dir########
+# command run to creatr role in webserver directory # ansible-galaxy init webserver
+- name: role playbook
+  hosts: all
+  become: true
+  roles:
+    - webserver
+
+# webserver/tasks/main.yml file for webserver
+- name: install package
+  package:
+    name: httpd
+    state: latest
+
+# add html file in /webserver/files
+
+- name: download web-application
+  get_url:
+    url: <path of template url>
+    dest: /var/www/html
+
+# /webserver/files/<name of conf. file with ".conf" extention> ... to specify path content
+
+<virtualhost *:80>
+servername localhost
+documentroot /var/www/html/....<dir consist of index.html page>
+</virtualhost>
+
+# webserver/tasks/main.yml file for webserver
+- name: install package unzip
+  package:
+    name: unzip
+    state: latest
+
+# extracting zip file by unarchive module
+- name: extracting zip file
+  unarcive:
+    src: /var/www/html/<zip file>
+    dest: /var/www/html
+    remote_src: true
+# copying /webserver/files/demo.com to conf.d dir of httpd
+
+- name: confign file copied
+  template:
+    src: /webserver/files/<name of conf. file in file dir.>
+    demo: /etc/httpd/conf.d/<name of conf. file in file dir.>
+  
+  notify:
+    - restart httpd
+
+# start and enable httpd
+- name: start and enableing httpd service
+  service:
+    name: httpd
+    status: started
+    enabled: true  
+
+# handler file /webserver/handlers/main.yml
+
+- name: restart httpd
+  service:
+    name: httpd
+    state: restarted
+
+...
