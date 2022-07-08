@@ -349,3 +349,54 @@ name: Playbook1
 -------------------------------------------------------
 
 
+
+
+
+
+
+TASK [websrv : confign file copied] *********************************************************************************************************
+ok: [16.170.225.226]
+
+TASK [websrv : start and enableing httpd service] *******************************************************************************************
+ok: [16.170.225.226]
+
+PLAY RECAP **********************************************************************************************************************************
+16.170.225.226             : ok=7    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+
+root@ip-172-31-38-59:/practice/shubham_b# vim websrv/tasks/main.yml
+    name: nginx
+    state: latest
+
+- name: download web-application
+  get_url:
+    url: https://www.free-css.com/assets/files/free-css-templates/download/page280/sungla.zip
+    dest: /usr/share/nginx/html
+
+- name: install package unzip
+  package:
+    name: unzip
+    state: latest
+
+- name: extracting zip file
+  unarchive:
+    src: /usr/share/nginx/html/sungla.zip
+    dest: /usr/share/nginx/html
+    remote_src: true
+
+- name: confign file copied
+  become: true
+  copy:
+    src: websrv/files/demo.conf
+    dest: /etc/nginx/conf.d/demo.conf
+  notify:
+   - restart httpd
+
+- name: start and enableing httpd service
+  service:
+    name: nginx
+    state: started
+...
+    
+    
+    ---------------------------------------------------------------------
+    
